@@ -10,20 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class ExcelUtil {
-    public void writeExcel(String excelPath, HashMap<String, String> map) throws IOException {
-        File file = new File(excelPath);
-        if(!file.isFile()){
-            SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
-            excelPath += "\\电子发票" + ft.format(new Date()) +".xlsx";
-            createExcel(excelPath);
-        }
+    public void writeExcel(String pdfPath, FileInputStream fileInput, String excelPath) throws IOException {
+        HashMap<String, String> map = new PDFUtil().readPdf(pdfPath);
         Workbook wb = null;
-        FileInputStream fileInput = null;
-        try {
-            fileInput = new FileInputStream(excelPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         if("xls".equals(excelPath.substring(excelPath.lastIndexOf(".") + 1))){
             wb = new HSSFWorkbook(fileInput);
         }else{
@@ -54,21 +43,22 @@ public class ExcelUtil {
             cell.setCellValue(key[i]);
         }
         sheet.setColumnWidth(0,22*256);
-        sheet.setColumnWidth(2,13*256);
-        sheet.setColumnWidth(4,15*256);
-        sheet.setColumnWidth(6,26*256);
-        sheet.setColumnWidth(20,27*256);
+        sheet.setColumnWidth(1,14*256);
+        sheet.setColumnWidth(2,14*256);
+        sheet.setColumnWidth(4,16*256);
+        sheet.setColumnWidth(6,28*256);
+        sheet.setColumnWidth(7,20*256);
+        sheet.setColumnWidth(11,21*256);
+        sheet.setColumnWidth(14,11*256);
+        sheet.setColumnWidth(15,11*256);
+        sheet.setColumnWidth(19,16*256);
+        sheet.setColumnWidth(20,22*256);
+        sheet.setColumnWidth(21,20*256);
+        sheet.setColumnWidth(22,42*256);
+        sheet.setColumnWidth(23,42*256);
+
         FileOutputStream output = new FileOutputStream(excelPath);
         wb.write(output);
         output.flush();
-    }
-
-    public static void main(String[] args) throws IOException {
-        String pdfPath = "C:\\Users\\Administrator\\Desktop\\发票\\111.pdf";
-        String excelPath = "C:\\Users\\Administrator\\Desktop\\发票";
-
-        PDFUtil pdfFile = new PDFUtil();
-        ExcelUtil excelFile = new ExcelUtil();
-        excelFile.writeExcel(excelPath, pdfFile.readPdf(pdfPath));
     }
 }
