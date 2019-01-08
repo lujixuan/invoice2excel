@@ -4,20 +4,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
+/**
+ * @author Duckbill-lujixuan
+ * @date 2019/01/08
+ */
 public class GuiUtil {
-    private JLabel inputLabel = new JLabel("输入：");
+    private JLabel inputLabel = new JLabel("读取：");
     private JTextField inputField = new JTextField(25);
     private JButton inputButton = new JButton("浏览");
     private JLabel outpubLabel = new JLabel("输出：");
     private JTextField outputField = new JTextField(25);
     private JButton outputButton = new JButton("浏览");
     private JButton convensionButton = new JButton("转换");
-    private JTextArea convensionTextArea = new JTextArea(5,40);
 
     public GuiUtil(){
         JFrame jFrame = new JFrame("电子发票转Excel");
@@ -27,8 +26,8 @@ public class GuiUtil {
         jFrame.setLayout(new GridLayout(3,3));
         // 设置居于屏幕中央
         jFrame.setLocationRelativeTo(null);
-        inputField.setText("选择一个文件夹或PDF文件");
-        outputField.setText("选择一个文件夹或Excel文件");
+        inputField.setText("选择一个PDF文件或文件夹");
+        outputField.setText("选择一个Excel文件或文件夹");
         inputField.setEnabled(false);
         outputField.setEnabled(false);
         panel1.add(inputLabel);
@@ -49,6 +48,7 @@ public class GuiUtil {
         jFrame.setVisible(true);
     }
 
+    //选择读取文件按钮
     class InputActionListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent arg){
@@ -57,21 +57,17 @@ public class GuiUtil {
             fc.setCurrentDirectory(new File("C:\\Users\\Administrator\\Desktop"));
             fc.setFileFilter(new FileNameExtensionFilter("pdf(*.pdf)", "pdf"));
             int val = fc.showOpenDialog(null);
-            if(val == JFileChooser.APPROVE_OPTION)
+            if (val == JFileChooser.APPROVE_OPTION)
             {
                 String path = fc.getSelectedFile().toString();
-                File file = new File(path);
-                if(file.isFile()){
-                    if(!"pdf".equals(path.substring(path.lastIndexOf(".") + 1))){
-                        JOptionPane.showMessageDialog(null, "请选择PDF文件或文件夹！", "错误",0);
-                        return;
-                    }
+                if(pdfOrDirectory(path)){
+                    inputField.setText(path);
                 }
-                inputField.setText(fc.getSelectedFile().toString());
             }
         }
     }
 
+    //选择输入文件按钮
     class OutputActionListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent arg){
@@ -83,72 +79,50 @@ public class GuiUtil {
             if(val == JFileChooser.APPROVE_OPTION)
             {
                 String path = fc.getSelectedFile().toString();
-                File file = new File(path);
-                if(file.isFile()){
-                    if(!"xls".equals(path.substring(path.lastIndexOf(".") + 1)) && !"xlsx".equals(path.substring(path.lastIndexOf(".") + 1))){
-                        JOptionPane.showMessageDialog(null, "请选择Excel文件或文件夹！", "错误",0);
-                        return;
-                    }
+                if(excelOrDirectory(path)){
+                    outputField.setText(path);
                 }
-                outputField.setText(fc.getSelectedFile().toString());
             }
         }
     }
 
+    //转换按钮
     class ConvensionActionListener implements  ActionListener{
         @Override
         public void actionPerformed(ActionEvent arg){
             String inputPath = inputField.getText();
             String outputPath = outputField.getText();
-            fileOrDirectory(inputPath, outputPath);
-        }
-
-        public void fileOrDirectory(String inputPath, String outputPath){
-            File inputFile = new File(inputPath);
-            File outputFile = new File(outputPath);
-            if(!outputFile.isFile()){
-                SimpleDateFormat ft = new SimpleDateFormat("yyyyMMddhhmmss");
-                outputPath += "\\电子发票" + ft.format(new Date()) +".xlsx";
-                try {
-                    new ExcelUtil().createExcel(outputPath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            String excelPath = outputPath;
-            FileInputStream fileInput = null;
-
-            try {
-                fileInput = new FileInputStream(outputPath);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "文件打开错误！请关闭Excel文件后重试。", "错误",0);
-                return;
-            }
-            if(inputFile.isFile()){
-                writeIntoFile(inputPath, fileInput, excelPath);
-            }else if (inputFile.isDirectory()){
-                String[] fileNameList = inputFile.list();
-                for(String fileName:fileNameList){
-                    writeIntoFile(inputPath + "\\" + fileName, fileInput, excelPath);
-                }
-            }
-            JOptionPane.showMessageDialog(null, "转换完成！", "成功",JOptionPane.PLAIN_MESSAGE);
-        }
-
-        public void writeIntoFile(String inputPath, FileInputStream inputStream, String excelPath){
-            String inputType = inputPath.substring(inputPath.lastIndexOf(".") + 1);
-            if("pdf".equals(inputType)){
-                try {
-                    new ExcelUtil().writeExcel(inputPath, inputStream, excelPath);
-                } catch (IOException e) {
-
-                }
+            if(pdfOrDirectory(inputPath) && excelOrDirectory(outputPath)){
+                new ExcelUtil().fileOrDirectory(inputPath, outputPath);
             }
         }
     }
 
+    public boolean pdfOrDirectory(String path){
+        File file = new File(path);
+        if(file.isFile()){
+            if("pdf".equals(path.substring(path.lastIndexOf(".") + 1))){
+                return true;
+            }
+        }else if(file.isDirectory()){
+            return true;
+        }
+        JOptionPane.showMessageDialog(null, "请选择一个PDF文件或文件夹！", "错误",0);
+        return false;
+    }
 
+    public boolean excelOrDirectory(String path){
+        File file = new File(path);
+        if(file.isFile()){
+            if("xls".equals(path.substring(path.lastIndexOf(".") + 1)) && "xlsx".equals(path.substring(path.lastIndexOf(".") + 1))){
+                return true;
+            }
+        }else if(file.isDirectory()){
+            return true;
+        }
+        JOptionPane.showMessageDialog(null, "请选择一个Excel文件或文件夹！", "错误",0);
+        return false;
+    }
 
     public static void main(String[] args){
         new GuiUtil();

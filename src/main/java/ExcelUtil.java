@@ -4,15 +4,21 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * @author Duckbill-lujixuan
+ * @date 2019/01/08
+ */
 public class ExcelUtil {
-    public void writeExcel(String pdfPath, FileInputStream fileInput, String excelPath) throws IOException {
+    public void writeExcel(String pdfPath, String excelPath) throws IOException {
         HashMap<String, String> map = new PDFUtil().readPdf(pdfPath);
         Workbook wb = null;
+        FileInputStream fileInput = new FileInputStream(excelPath);
         if("xls".equals(excelPath.substring(excelPath.lastIndexOf(".") + 1))){
             wb = new HSSFWorkbook(fileInput);
         }else{
@@ -29,6 +35,36 @@ public class ExcelUtil {
         FileOutputStream fileOutputStream = new FileOutputStream(excelPath);
         wb.write(fileOutputStream);
         fileOutputStream.close();
+    }
+
+    public void fileOrDirectory(String inputPath, String outputPath){
+        File inputFile = new File(inputPath);
+        File outputFile = new File(outputPath);
+        if(!outputFile.isFile()){
+            SimpleDateFormat ft = new SimpleDateFormat("yyyyMMddhhmmss");
+            outputPath += "\\电子发票" + ft.format(new Date()) +".xlsx";
+            try {
+                createExcel(outputPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            if (inputFile.isFile()) {
+                writeExcel(inputPath, outputPath);
+            } else if (inputFile.isDirectory()) {
+                String[] fileNameList = inputFile.list();
+                for (String fileName : fileNameList) {
+                    if("pdf".equals(fileName.substring(fileName.lastIndexOf(".") + 1))) {
+                        writeExcel(inputPath + "\\" + fileName, outputPath);
+                    }
+                }
+            }
+        }catch (IOException e){
+            JOptionPane.showMessageDialog(null, "文件打开错误！请关闭Excel文件后重试。", "错误",0);
+            return;
+        }
+        JOptionPane.showMessageDialog(null, "转换完成！", "成功",JOptionPane.PLAIN_MESSAGE);
     }
 
     public void createExcel(String excelPath) throws IOException {

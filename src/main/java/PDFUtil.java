@@ -7,6 +7,10 @@ import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 
+/**
+ * @author Duckbill-lujixuan
+ * @date 2019/01/08
+ */
 public class PDFUtil {
 
     public HashMap<String, String> readPdf(String readPath){
