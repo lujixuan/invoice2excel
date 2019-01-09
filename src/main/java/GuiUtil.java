@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,9 @@ public class GuiUtil {
     private JTextField outputField = new JTextField(25);
     private JButton outputButton = new JButton("浏览");
     private JButton convensionButton = new JButton("转换");
+    //得到系统桌面文件夹 Desktop
+    FileSystemView homeFileSystemView = FileSystemView.getFileSystemView();
+    File homePath = homeFileSystemView.getHomeDirectory();
 
     public GuiUtil(){
         JFrame jFrame = new JFrame("电子发票转Excel");
@@ -26,10 +30,12 @@ public class GuiUtil {
         jFrame.setLayout(new GridLayout(3,3));
         // 设置居于屏幕中央
         jFrame.setLocationRelativeTo(null);
-        inputField.setText("选择一个PDF文件或文件夹");
-        outputField.setText("选择一个Excel文件或文件夹");
-        inputField.setEnabled(false);
-        outputField.setEnabled(false);
+        outputField.setText(homePath.getPath());
+//        inputField.setText("选择一个PDF文件或文件夹");
+//        inputField.setEnabled(false);
+//        outputField.setEnabled(false);
+        inputField.setDisabledTextColor(Color.black);
+        outputField.setDisabledTextColor(Color.black);
         panel1.add(inputLabel);
         panel1.add(inputField);
         panel1.add(inputButton);
@@ -54,11 +60,10 @@ public class GuiUtil {
         public void actionPerformed(ActionEvent arg){
             JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fc.setCurrentDirectory(new File("C:\\Users\\Administrator\\Desktop"));
+            fc.setCurrentDirectory(homePath);
             fc.setFileFilter(new FileNameExtensionFilter("pdf(*.pdf)", "pdf"));
             int val = fc.showOpenDialog(null);
-            if (val == JFileChooser.APPROVE_OPTION)
-            {
+            if (val == JFileChooser.APPROVE_OPTION) {
                 String path = fc.getSelectedFile().toString();
                 if(pdfOrDirectory(path)){
                     inputField.setText(path);
@@ -76,8 +81,7 @@ public class GuiUtil {
             fc.setCurrentDirectory(new File("C:\\Users\\Administrator\\Desktop"));
             fc.setFileFilter(new FileNameExtensionFilter("xls(*.xls, *.xlsx)", "xls", "xlsx"));
             int val = fc.showOpenDialog(null);
-            if(val == JFileChooser.APPROVE_OPTION)
-            {
+            if(val == JFileChooser.APPROVE_OPTION) {
                 String path = fc.getSelectedFile().toString();
                 if(excelOrDirectory(path)){
                     outputField.setText(path);

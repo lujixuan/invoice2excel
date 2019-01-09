@@ -18,7 +18,7 @@ public class PDFUtil {
         Rectangle purchaser = new Rectangle(103, 90, 220, 60);
         Rectangle password = new Rectangle(350,80,306,70);
         Rectangle tax = new Rectangle(10, 160, 762, 40);
-        Rectangle sum = new Rectangle(120, 280, 200, 60);
+        Rectangle sum = new Rectangle(120, 280, 700, 20);
         Rectangle seller = new Rectangle(103,300,220,60);
         Rectangle remark = new Rectangle(360,300,300,60);
         Rectangle end = new Rectangle(10,360,400,38);
@@ -67,13 +67,17 @@ public class PDFUtil {
         String[] taxArray = taxString.split("[: \n\" + \" \r\" + \"  ]");
         String[] purchaserArray = purchaserString.split("[: \n" + " \r" + "  ]");
         String[] headerArray = headerString.split("[: \n \r  ]");
+        String[] sumArray = sumString.split("[: \n" + " \r" + "  "+"￥"+"）]");
+        for(int i = 0; i < sumArray.length; i++)
+            System.out.println(i + " "+sumArray[i]);
         map.put("密码区", passwordString.split("[: \n" + " \r" + "  ]")[0]);
-        map.put("价税合计（大写）", sumString.split("[: \n" + " \r" + "  ]")[0]);
+        map.put("价税合计（大写）", sumArray[1]);
+        map.put("税价合计", sumArray[3]);
         map.put("备注", remarkString.split("[\r]")[0]);
         map.put("收款人", endArray[10]);
         map.put("复核", endArray[11]);
         map.put("开票人", endArray[12]);
-        map.put("销售方名称", sellerArray[0]);
+        map.put("开票抬头", sellerArray[0]);
         map.put("销售方纳税人识别号", sellerArray[2]);
         map.put("销售方地址、电话", sellerArray[4]);
         map.put("销售方开户行及账号", sellerArray[6]);
