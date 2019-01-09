@@ -114,7 +114,7 @@ public class GuiUtil {
     public boolean excelOrDirectory(String path){
         File file = new File(path);
         if(file.isFile()){
-            if("xls".equals(path.substring(path.lastIndexOf(".") + 1)) && "xlsx".equals(path.substring(path.lastIndexOf(".") + 1))){
+            if("xls".equals(path.substring(path.lastIndexOf(".") + 1)) || "xlsx".equals(path.substring(path.lastIndexOf(".") + 1))){
                 return true;
             }
         }else if(file.isDirectory()){
