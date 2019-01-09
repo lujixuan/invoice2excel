@@ -59,26 +59,25 @@ public class PDFUtil {
         } catch (Exception e) {
             System.out.println("pdf转化出错！");
         }
-        passwordString = passwordString.replace('\r', ' ');
-        passwordString = passwordString.replace('\n', ' ');
-        passwordString = passwordString.replace(" ", "");
-        String[] endArray = endString.split("[: \n\" + \" \r\" + \"  ]");
-        String[] sellerArray = sellerString.split("[: \n\" + \" \r\" + \"  ]");
-        String[] taxArray = taxString.split("[: \n\" + \" \r\" + \"  ]");
-        String[] purchaserArray = purchaserString.split("[: \n" + " \r" + "  ]");
-        String[] headerArray = headerString.split("[: \n \r  ]");
-        String[] sumArray = sumString.replace("\r\n"," ").replace("￥","").split("[: \n" + " \r" + "  " + "￥]");
-        map.put("密码区", passwordString.split("[: \n" + " \r" + "  ]")[0]);
+        passwordString = passwordString.replace("\r\n", "").replace(" ", "");
+        remarkString = remarkString.replace("\n","").replace("\r","");
+        String[] endArray = endString.replace("\r\n", " ").split("[: "+" ]");
+        String[] sellerArray = sellerString.replace("\r\n", " ").split("[: "+" ]");
+        String[] taxArray = taxString.replace("\r\n", " ").split("[: "+" ]");
+        String[] purchaserArray = purchaserString.replace("\r\n", " ").split("[: "+" ]");
+        String[] headerArray = headerString.replace("\r\n", " ").split("[: "+" ]");
+        String[] sumArray = sumString.replace("\r\n"," ").replace("￥","").split("[:" + "￥" + " ]");
+        map.put("密码区", passwordString);
         map.put("价税合计（大写）", sumArray[3]);
         map.put("税价合计", sumArray[4]);
-        map.put("备注", remarkString.replace("\n","").replace("\r",""));
+        map.put("备注", remarkString);
         map.put("收款人", endArray[10]);
         map.put("复核", endArray[11]);
         map.put("开票人", endArray[12]);
         map.put("开票抬头", sellerArray[0]);
-        map.put("销售方纳税人识别号", sellerArray[2]);
-        map.put("销售方地址、电话", sellerArray[4]);
-        map.put("销售方开户行及账号", sellerArray[6]);
+        map.put("销售方纳税人识别号", sellerArray[1]);
+        map.put("销售方地址、电话", sellerArray[2]);
+        map.put("销售方开户行及账号", sellerArray[3]);
         map.put("项目名称", taxArray[0]);
         map.put("车牌号", taxArray[1]);
         map.put("类型", taxArray[2]);
@@ -88,15 +87,15 @@ public class PDFUtil {
         map.put("税率", taxArray[6]);
         map.put("税额", sumArray[2]);
         map.put("购买方名称", purchaserArray[0]);
-        map.put("购买方纳税人识别号", purchaserArray[2]);
-        map.put("购买方地址、电话", purchaserArray.length == 4 ? purchaserArray[4] : "");
-        map.put("购买方开户行及账号", purchaserArray.length == 6 ? purchaserArray[6] : "");
+        map.put("购买方纳税人识别号", purchaserArray[1]);
+        map.put("购买方地址、电话", purchaserArray.length == 3 ? purchaserArray[2] : "");
+        map.put("购买方开户行及账号", purchaserArray.length == 4 ? purchaserArray[3] : "");
         map.put("发票类型", headerArray[0]);
-        map.put("机器编号", headerArray[17]);
-        map.put("发票代码", headerArray[19]);
-        map.put("发票号码", headerArray[21]);
-        map.put("开票日期", headerArray[23]);
-        map.put("校验码", headerArray[25]+headerArray[26]+headerArray[27]+headerArray[28]);
+        map.put("机器编号", headerArray[12]);
+        map.put("发票代码", headerArray[13]);
+        map.put("发票号码", headerArray[14]);
+        map.put("开票日期", headerArray[15]);
+        map.put("校验码", headerArray[16]+headerArray[17]+headerArray[18]+headerArray[19]);
 
         return map;
     }
