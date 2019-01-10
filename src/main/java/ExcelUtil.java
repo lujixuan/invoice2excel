@@ -71,31 +71,36 @@ public class ExcelUtil {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("电子发票");
         XSSFRow row = sheet.createRow(0);
-        String[] key = {"发票类型", "机器编号", "发票代码", "发票号码", "开票日期", "校验码", "购买方名称", "购买方纳税人识别号", "购买方地址、电话",
-                "购买方开户行及账号", "密码区", "项目名称", "车牌号", "类型", "通行日期起", "通行日期止", "金额", "税率", "税额",
-                "价税合计（大写）","税价合计", "开票抬头", "销售方纳税人识别号", "销售方地址、电话", "销售方开户行及账号", "备注", "收款人", "复核", "开票人"};
+        String[] key1 = {"发票类型", "机器编号", "发票代码", "发票号码", "开票日期", "校验码",
+                "购买方名称", "购买方纳税人识别号", "购买方地址、电话","购买方开户行及账号",
+                "密码区",
+                "项目名称", "车牌号", "类型", "通行日期起", "通行日期止", "金额", "税率", "税额",
+                "价税合计（大写）","税价合计",
+                "开票抬头", "销售方纳税人识别号", "销售方地址、电话", "销售方开户行及账号",
+                "备注",
+                "收款人", "复核", "开票人"};
         String[] key2 = {"开票抬头", "发票号码", "开票日期", "金额", "税率", "税额", "税价合计"};
-        for(int i = 0; i < key2.length; i++){
+        for(int i = 0; i < key1.length; i++){
             Cell cell = row.createCell(i);
-            cell.setCellValue(key2[i]);
+            cell.setCellValue(key1[i]);
         }
-//        sheet.setColumnWidth(0,22*256);
-//        sheet.setColumnWidth(1,14*256);
-//        sheet.setColumnWidth(2,14*256);
-//        sheet.setColumnWidth(4,16*256);
-//        sheet.setColumnWidth(6,28*256);
-//        sheet.setColumnWidth(7,20*256);
-//        sheet.setColumnWidth(11,21*256);
-//        sheet.setColumnWidth(14,11*256);
-//        sheet.setColumnWidth(15,11*256);
-//        sheet.setColumnWidth(19,16*256);
-//        sheet.setColumnWidth(20,22*256);
-//        sheet.setColumnWidth(21,20*256);
-//        sheet.setColumnWidth(22,42*256);
-//        sheet.setColumnWidth(23,42*256);
-        sheet.setColumnWidth(0,42*256);
-        sheet.setColumnWidth(1,9*256);
-        sheet.setColumnWidth(2,15*256);
+        sheet.setColumnWidth(0,22*256);
+        sheet.setColumnWidth(1,14*256);
+        sheet.setColumnWidth(2,14*256);
+        sheet.setColumnWidth(4,16*256);
+        sheet.setColumnWidth(6,28*256);
+        sheet.setColumnWidth(7,20*256);
+        sheet.setColumnWidth(11,21*256);
+        sheet.setColumnWidth(14,11*256);
+        sheet.setColumnWidth(15,11*256);
+        sheet.setColumnWidth(19,16*256);
+        sheet.setColumnWidth(20,22*256);
+        sheet.setColumnWidth(21,20*256);
+        sheet.setColumnWidth(22,42*256);
+        sheet.setColumnWidth(23,42*256);
+//        sheet.setColumnWidth(0,42*256);
+//        sheet.setColumnWidth(1,9*256);
+//        sheet.setColumnWidth(2,15*256);
 
         FileOutputStream output = new FileOutputStream(excelPath);
         wb.write(output);
