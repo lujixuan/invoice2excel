@@ -31,9 +31,6 @@ public class GuiUtil {
         // 设置居于屏幕中央
         jFrame.setLocationRelativeTo(null);
         outputField.setText(homePath.getPath());
-//        inputField.setText("选择一个PDF文件或文件夹");
-//        inputField.setEnabled(false);
-//        outputField.setEnabled(false);
         inputField.setDisabledTextColor(Color.black);
         outputField.setDisabledTextColor(Color.black);
         panel1.add(inputLabel);
