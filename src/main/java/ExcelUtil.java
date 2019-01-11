@@ -130,7 +130,7 @@ public class ExcelUtil {
         // 首行不滚动
         sheet.createFreezePane(0, 1);
 
-        FileOutputStream output = new FileOutputStream(outputPath);
+        FileOutputStream output = new FileOutputStream(excelPath);
         wb.write(output);
         output.flush();
     }
