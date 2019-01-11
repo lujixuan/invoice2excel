@@ -31,7 +31,7 @@ public class PDFUtil {
         String sellerString = "";
         String remarkString = "";
         String endString = "";
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>(30);
 
 
         PDDocument doc = PDDocument.load(new File(readPath));
