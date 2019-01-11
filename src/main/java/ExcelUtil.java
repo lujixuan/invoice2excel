@@ -126,7 +126,7 @@ public class ExcelUtil {
         sheet.setColumnWidth(22,20*256);
         sheet.setColumnWidth(23,42*256);
         sheet.setColumnWidth(24,42*256);
-        sheet.createFreezePane(30,1);
+        sheet.createFreezePane(0,1);
         FileOutputStream output = new FileOutputStream(excelPath);
         wb.write(output);
         output.flush();
