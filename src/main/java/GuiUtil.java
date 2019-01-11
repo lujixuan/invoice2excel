@@ -29,6 +29,7 @@ public class GuiUtil {
         JPanel panel3 = new JPanel();
         jFrame.setLayout(new GridLayout(3,3));
         // 设置居于屏幕中央
+        jFrame.setSize(400,200);
         jFrame.setLocationRelativeTo(null);
         outputField.setText(homePath.getPath());
         inputField.setDisabledTextColor(Color.black);

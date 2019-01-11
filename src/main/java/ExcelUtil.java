@@ -64,6 +64,7 @@ public class ExcelUtil {
                 List<HashMap<String, String>> mapList = new ArrayList<>();
                 try {
                     mapList.add(new PDFUtil().readPdf(inputPath));
+                    PDF_NUM += 1;
                 }catch (Exception e){
                     JOptionPane.showMessageDialog(null, "PDF文件打开错误！请检查后重试。", "错误",0);
                     return;
@@ -125,7 +126,7 @@ public class ExcelUtil {
         sheet.setColumnWidth(22,20*256);
         sheet.setColumnWidth(23,42*256);
         sheet.setColumnWidth(24,42*256);
-
+        sheet.createFreezePane(30,1);
         FileOutputStream output = new FileOutputStream(excelPath);
         wb.write(output);
         output.flush();
