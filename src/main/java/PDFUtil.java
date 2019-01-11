@@ -31,11 +31,10 @@ public class PDFUtil {
         String sellerString = "";
         String remarkString = "";
         String endString = "";
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>(29);
 
-
-        PDDocument doc = PDDocument.load(new File(readPath));
         // 根据矩形窗口读PDF
+        PDDocument doc = PDDocument.load(new File(readPath));
         PDFTextStripperByArea stripper = new PDFTextStripperByArea();
         // 将窗口添加入stripper
         stripper.addRegion("header", header);
@@ -64,12 +63,12 @@ public class PDFUtil {
         // 分割字符串，将数据存入HashMap
         passwordString = passwordString.replace("\r\n", "").replace(" ", "");
         remarkString = remarkString.replace("\n","").replace("\r","");
-        String[] endArray = endString.replace("\r\n", " ").split("[: "+" ]");
-        String[] sellerArray = sellerString.replace("\r\n", " ").split("[: "+" ]");
-        String[] taxArray = taxString.replace("\r\n", " ").split("[: "+" ]");
-        String[] purchaserArray = purchaserString.replace("\r\n", " ").split("[: "+" ]");
-        String[] headerArray = headerString.replace("\r\n", " ").split("[: "+" ]");
-        String[] sumArray = sumString.replace("\r\n"," ").replace("￥","").split("[:" + "￥" + " ]");
+        String[] endArray = endString.replace("\r\n", " ").split("[:" + " ]");
+        String[] sellerArray = sellerString.replace("\r\n", " ").split("[:" + " ]");
+        String[] taxArray = taxString.replace("\r\n", " ").split("[:" + " ]");
+        String[] purchaserArray = purchaserString.replace("\r\n", " ").split("[:" + " ]");
+        String[] headerArray = headerString.replace("\r\n", " ").split("[:" + " ]");
+        String[] sumArray = sumString.replace("\r\n"," ").replace("￥","").split("[:" + " ]");
 
         if (sumArray.length >= 5 && sellerArray.length >= 4 && taxArray.length >= 7 && headerArray.length >= 20
                 && purchaserArray.length >= 2 && endArray.length >= 13 && passwordString != "" && remarkString != "") {
@@ -105,7 +104,6 @@ public class PDFUtil {
         } else {
             throw new Exception();
         }
-
 
         return map;
     }
