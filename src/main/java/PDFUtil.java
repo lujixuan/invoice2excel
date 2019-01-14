@@ -31,11 +31,7 @@ public class PDFUtil {
         String sellerString = "";
         String remarkString = "";
         String endString = "";
-<<<<<<< HEAD
-        HashMap<String, String> map = new HashMap<>(29);
-=======
         HashMap<String, String> map = new HashMap<>(30);
->>>>>>> origin/master
 
         // 根据矩形窗口读PDF
         PDDocument doc = PDDocument.load(new File(readPath));
