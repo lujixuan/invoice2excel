@@ -21,7 +21,7 @@ public class ExcelUtil {
     private int allExcelRowNum = 0;
     private int allErrorNum = 0;
     private StringBuffer allErrorFileName = new StringBuffer();
-    private int THREAD_NUM = 10;
+    private int THREAD_NUM = 4;
 
     public synchronized void setAllPdfNum(int pdfNum){
         this.allPdfNum += pdfNum;
@@ -49,8 +49,8 @@ public class ExcelUtil {
                 JOptionPane.showMessageDialog(null, "创建Excel文件失败！请稍后再试。", "错误", 0);
             }
         }
-        // 读取pdf，写入excel
         try {
+            // 如果是文件，直接读写
             if (inputFile.isFile()) {
                 List<HashMap<String, String>> mapList = new ArrayList<>();
                 try {
@@ -61,8 +61,8 @@ public class ExcelUtil {
                     return;
                 }
                 writeExcel(mapList, outputPath);
+            // 如果是文件夹，对目录下所有文件多线程读写
             } else if (inputFile.isDirectory()) {
-                // 对目录下所有文件，多线程读取
                 String[] fileNameList = inputFile.list();
                 readByMultThread(fileNameList, inputPath, outputPath);
             }

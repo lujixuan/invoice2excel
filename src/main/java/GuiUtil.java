@@ -46,6 +46,7 @@ public class GuiUtil {
         jFrame.add(panel3);
         jFrame.pack();
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // 给三个按钮添加事件
         inputButton.addActionListener(new InputActionListener());
         outputButton.addActionListener(new OutputActionListener());
         convensionButton.addActionListener(new ConvensionActionListener());
