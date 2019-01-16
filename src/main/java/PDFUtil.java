@@ -63,11 +63,11 @@ public class PDFUtil {
         // 分割字符串，将数据存入HashMap
         passwordString = passwordString.replace("\r\n", "").replace(" ", "");
         remarkString = remarkString.replace("\n","").replace("\r","");
-        String[] endArray = endString.replace("\r\n", " ").split("[: "+" ]");
-        String[] sellerArray = sellerString.replace("\r\n", " ").split("[: "+" ]");
-        String[] taxArray = taxString.replace("\r\n", " ").split("[: "+" ]");
-        String[] purchaserArray = purchaserString.replace("\r\n", " ").split("[: "+" ]");
-        String[] headerArray = headerString.replace("\r\n", " ").split("[: "+" ]");
+        String[] endArray = endString.replace("\r\n", " ").split("[:"+" ]");
+        String[] sellerArray = sellerString.replace("\r\n", " ").split("[:"+" ]");
+        String[] taxArray = taxString.replace("\r\n", " ").split("[:"+" ]");
+        String[] purchaserArray = purchaserString.replace("\r\n", " ").split("[:"+" ]");
+        String[] headerArray = headerString.replace("\r\n", " ").split("[:"+" ]");
         String[] sumArray = sumString.replace("\r\n"," ").replace("￥","").split("[:" + "￥" + " ]");
 
         if (sumArray.length >= 5 && sellerArray.length >= 4 && taxArray.length >= 7 && headerArray.length >= 20

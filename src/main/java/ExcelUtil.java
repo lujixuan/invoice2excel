@@ -21,17 +21,17 @@ public class ExcelUtil {
     private int allExcelRowNum = 0;
     private int allErrorNum = 0;
     private StringBuffer allErrorFileName = new StringBuffer();
-    private int THREAD_NUM = 4;
+    private static final int THREAD_NUM = 4;
 
-    public synchronized void setAllPdfNum(int pdfNum){
+    private synchronized void setAllPdfNum(int pdfNum){
         this.allPdfNum += pdfNum;
     }
 
-    public synchronized void setAllErrorNum(int errorNum){
+    private synchronized void setAllErrorNum(int errorNum){
         this.allErrorNum += errorNum;
     }
 
-    public synchronized void setAllErrorFileName(String errorFileName){
+    private synchronized void setAllErrorFileName(String errorFileName){
         this.allErrorFileName.append(errorFileName);
     }
 
