@@ -7,10 +7,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.swing.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Duckbill-lujixuan
@@ -22,6 +21,7 @@ public class ExcelUtil {
     private int allErrorNum = 0;
     private StringBuffer allErrorFileName = new StringBuffer();
     private static final int THREAD_NUM = 4;
+    public Lock lock = new ReentrantLock();
 
     private synchronized void setAllPdfNum(int pdfNum){
         this.allPdfNum += pdfNum;
@@ -43,39 +43,30 @@ public class ExcelUtil {
         if (outputFile.isDirectory()) {
             SimpleDateFormat ft = new SimpleDateFormat("yyyyMMddhhmmss");
             outputPath += "\\电子发票" + ft.format(new Date()) + ".xlsx";
-            try {
-                createExcel(outputPath);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "创建Excel文件失败！请稍后再试。", "错误", 0);
-            }
+            createExcel(outputPath);
         }
-        try {
-            // 如果是文件，直接读写
-            if (inputFile.isFile()) {
-                List<HashMap<String, String>> mapList = new ArrayList<>();
-                try {
-                    mapList.add(new PDFUtil().readPdf(inputPath));
-                    allPdfNum += 1;
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "PDF文件打开错误！请检查后重试。", "错误", 0);
-                    return;
-                }
-                writeExcel(mapList, outputPath);
-            // 如果是文件夹，对目录下所有文件多线程读写
-            } else if (inputFile.isDirectory()) {
-                String[] fileNameList = inputFile.list();
-                readByMultThread(fileNameList, inputPath, outputPath);
+        // 如果是文件，直接读写
+        if (inputFile.isFile()) {
+            List<HashMap<String, String>> mapList = new ArrayList<>();
+            try {
+                mapList.add(new PDFUtil().readPdf(inputPath));
+                allPdfNum += 1;
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "PDF文件打开错误！请检查后重试。", "错误", 0);
+                return;
             }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Excel文件打开错误！请关闭Excel文件后重试。", "错误", 0);
-            return;
+            writeExcel(mapList, outputPath);
+        // 如果是文件夹，对目录下所有文件多线程读写
+        } else if (inputFile.isDirectory()) {
+            String[] fileNameList = inputFile.list();
+            readByMultThread(fileNameList, inputPath, outputPath);
         }
         JOptionPane.showMessageDialog(null, "转换完成！" + "\n读取PDF文件数：" + allPdfNum + "\n写入Excel行数：" + allExcelRowNum
                 + "\n错误数：" + allErrorNum + "\n错误文件：\n" + (allErrorFileName.length() == 0 ? "无" : allErrorFileName), "完成", JOptionPane.PLAIN_MESSAGE);
     }
 
     // 多线程读pdf
-    private void readByMultThread(String[] fileNameList, String inputPath, String outputPath) throws IOException {
+    private void readByMultThread(String[] fileNameList, String inputPath, String outputPath) {
         // 分配文件数
         int increment = fileNameList.length / THREAD_NUM + 1;
         int start = 0;
@@ -122,7 +113,6 @@ public class ExcelUtil {
         @Override
         public void run() {
             List<HashMap<String, String>> mapList = new ArrayList<>();
-
             for (int i = startnum; i < endnum; i++) {
                 //System.out.println(i); //+ Thread.currentThread().getName());
                 String fileName = fileNameList[i];
@@ -140,43 +130,45 @@ public class ExcelUtil {
             setAllPdfNum(pdfNum);
             setAllErrorNum(errorNum);
             setAllErrorFileName(errorFileName.toString());
-            try {
+
                 writeExcel(mapList, excelPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-
     // 写入excel
-    private synchronized void writeExcel (List < HashMap < String, String >> mapList, String excelPath) throws
-    IOException {
-        Workbook wb = null;
-        FileInputStream fileInput = new FileInputStream(excelPath);
-        if ("xls".equals(excelPath.substring(excelPath.lastIndexOf(".") + 1))) {
-            wb = new HSSFWorkbook(fileInput);
-        } else {
-            wb = new XSSFWorkbook(fileInput);
-        }
-        Sheet sheet = wb.getSheetAt(0);
-        Row head = sheet.getRow(0);
-        for (HashMap<String, String> map : mapList) {
-            Row newRow = sheet.createRow(sheet.getLastRowNum() + 1);
-            for (int i = 0; i < head.getPhysicalNumberOfCells(); i++) {
-                Cell newCell = newRow.createCell(i);
-                String key = head.getCell(i).toString();
-                newCell.setCellValue(map.get(key));
+    private void writeExcel (List < HashMap < String, String >> mapList, String excelPath) {
+        lock.lock();
+        try {
+            Workbook wb = null;
+            FileInputStream fileInput = new FileInputStream(excelPath);
+            if ("xls".equals(excelPath.substring(excelPath.lastIndexOf(".") + 1))) {
+                wb = new HSSFWorkbook(fileInput);
+            } else {
+                wb = new XSSFWorkbook(fileInput);
             }
-            allExcelRowNum += 1;
+            Sheet sheet = wb.getSheetAt(0);
+            Row head = sheet.getRow(0);
+            for (HashMap<String, String> map : mapList) {
+                Row newRow = sheet.createRow(sheet.getLastRowNum() + 1);
+                for (int i = 0; i < head.getPhysicalNumberOfCells(); i++) {
+                    Cell newCell = newRow.createCell(i);
+                    String key = head.getCell(i).toString();
+                    newCell.setCellValue(map.get(key));
+                }
+                allExcelRowNum += 1;
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(excelPath);
+            wb.write(fileOutputStream);
+            fileOutputStream.close();
+        }catch(IOException e){
+            JOptionPane.showMessageDialog(null, "Excel文件打开错误！请关闭Excel文件后重试。", "错误", 0);
+        } finally {
+            lock.unlock();
         }
-        FileOutputStream fileOutputStream = new FileOutputStream(excelPath);
-        wb.write(fileOutputStream);
-        fileOutputStream.close();
     }
 
     // 创建excel
-    private void createExcel (String outputPath) throws IOException {
+    private void createExcel (String outputPath) {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("电子发票");
         XSSFRow row = sheet.createRow(0);
@@ -211,8 +203,12 @@ public class ExcelUtil {
         // 首行不滚动
         sheet.createFreezePane(0, 1);
 
-        FileOutputStream output = new FileOutputStream(outputPath);
-        wb.write(output);
-        output.flush();
+        try {
+            FileOutputStream output = new FileOutputStream(outputPath);
+            wb.write(output);
+            output.flush();
+        }catch(IOException e) {
+            JOptionPane.showMessageDialog(null, "创建Excel文件失败！请稍后再试。", "错误", 0);
+        }
     }
 }
